@@ -3,10 +3,7 @@ package com.eclipseop.osrs.util;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -85,5 +82,27 @@ public class Gamepack {
       e.printStackTrace();
     }
     return classNodes;
+  }
+
+  public static byte[] getJarBytes() {
+    try {
+      InputStream inputStream =
+          new BufferedInputStream(new URL(getGamepackDownloadUrl()).openStream());
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+      byte[] buffer = new byte[4096];
+      int caret;
+
+      while ((caret = inputStream.read(buffer)) != -1) {
+        outputStream.write(buffer, 0, caret);
+      }
+
+      inputStream.close();
+      outputStream.close();
+      return outputStream.toByteArray();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 }
