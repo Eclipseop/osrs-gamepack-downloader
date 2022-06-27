@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class Gamepack {
 
   private static final Logger LOGGER = Logger.getLogger(Gamepack.class.getName());
-  private static Function<JarInputStream, byte[]> jisToByteArray =
+  private static final Function<JarInputStream, byte[]> jisToByteArray =
       jis -> {
         try {
           ByteArrayOutputStream out = new ByteArrayOutputStream();
