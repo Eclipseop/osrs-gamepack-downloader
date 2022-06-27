@@ -22,8 +22,6 @@ public class Application implements BackgroundFunction<Message> {
 
   @Override
   public void accept(Message message, Context context) throws Exception {
-    LOGGER.info("Test with java Logger");
-
     List<ClassNode> parse = Gamepack.parse();
     int revision =
         Revision.getRevision(
