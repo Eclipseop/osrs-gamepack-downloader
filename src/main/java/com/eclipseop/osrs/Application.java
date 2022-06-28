@@ -22,10 +22,13 @@ public class Application implements BackgroundFunction<Message> {
 
   @Override
   public void accept(Message message, Context context) throws Exception {
-    List<ClassNode> parse = Gamepack.parse();
+    List<ClassNode> gamepackClassNodes = Gamepack.parse();
     int revision =
         Revision.getRevision(
-            parse.stream().filter(cn -> cn.name.equals("client")).findFirst().orElseThrow());
+            gamepackClassNodes.stream()
+                .filter(cn -> cn.name.equals("client"))
+                .findFirst()
+                .orElseThrow());
     LOGGER.info("Detected Revision: " + revision);
 
     Storage storage = StorageOptions.newBuilder().setProjectId(PROJECT_ID).build().getService();

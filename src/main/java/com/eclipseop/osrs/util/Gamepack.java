@@ -17,10 +17,9 @@ import java.util.stream.Collectors;
 public class Gamepack {
 
   private static final Logger LOGGER = Logger.getLogger(Gamepack.class.getName());
-  private static final Function<JarInputStream, byte[]> jisToByteArray =
+  private static final Function<JarInputStream, byte[]> jisToByteArrayFunction =
       jis -> {
-        try {
-          ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
           byte[] buffer = new byte[4096];
           int caret;
 
@@ -28,10 +27,11 @@ public class Gamepack {
             out.write(buffer, 0, caret);
           }
           out.flush();
-          return (byte[]) Function.identity().apply(out.toByteArray());
+          return out.toByteArray();
         } catch (IOException e) {
-          return null;
+          e.printStackTrace();
         }
+        return null;
       };
 
   private static List<String> getConfig() {
@@ -71,7 +71,7 @@ public class Gamepack {
       while ((entry = jis.getNextJarEntry()) != null) {
         if (!entry.getName().endsWith(".class")) continue;
 
-        ClassReader cr = new ClassReader(jisToByteArray.apply(jis));
+        ClassReader cr = new ClassReader(jisToByteArrayFunction.apply(jis));
         ClassNode classNode = new ClassNode();
 
         cr.accept(classNode, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
