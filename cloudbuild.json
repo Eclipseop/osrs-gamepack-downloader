@@ -4,7 +4,7 @@
       "name": "gcr.io/google.com/cloudsdktool/cloud-sdk",
       "id": "Deploy CloudFunction",
       "args": [
-        "gloud",
+        "gcloud",
         "functions",
         "deploy",
         "osrs-archive-cf",
