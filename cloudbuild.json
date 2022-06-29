@@ -1,0 +1,20 @@
+{
+  "steps": [
+    {
+      "name": "gcr.io/google.com/cloudsdktool/cloudsdk",
+      "id": "Deploy CloudFunction",
+      "args": [
+        "gloud",
+        "functions",
+        "deploy",
+        "osrs-archive-cf",
+        "--region=us-central1",
+        "--entry-point=com.eclipseop.osrs.Application",
+        "--trigger-topic=osrs-archive-trigger",
+        "--source=.",
+        "--project=osrs-gamepack-archive",
+        "--runtime=java11"
+      ]
+    }
+  ]
+}
