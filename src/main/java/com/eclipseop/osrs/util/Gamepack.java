@@ -1,8 +1,5 @@
 package com.eclipseop.osrs.util;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.tree.ClassNode;
-
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
@@ -13,6 +10,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.tree.ClassNode;
 
 public class Gamepack {
 
