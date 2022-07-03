@@ -13,7 +13,7 @@
         "--trigger-topic=osrs-archive-trigger",
         "--source=.",
         "--project=osrs-gamepack-archive",
-        "--runtime=java17"
+        "--runtime=java11"
       ]
     }
   ]

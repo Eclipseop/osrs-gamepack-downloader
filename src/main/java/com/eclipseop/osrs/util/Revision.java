@@ -5,8 +5,9 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
+import java.util.Arrays;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 public class Revision {
 
@@ -14,9 +15,9 @@ public class Revision {
     AbstractInsnNode abstractInsnNode =
         classNode.methods.stream()
             .filter(mn -> mn.name.equals("init"))
-            .mapMulti(
-                (BiConsumer<MethodNode, Consumer<AbstractInsnNode>>)
-                    (mn, c) -> mn.instructions.forEach(c))
+            .flatMap(
+                (Function<MethodNode, Stream<AbstractInsnNode>>)
+                    mn -> Arrays.stream(mn.instructions.toArray()))
             .filter(ain -> ain instanceof IntInsnNode && ((IntInsnNode) ain).operand == 503)
             .findFirst()
             .orElseThrow();
