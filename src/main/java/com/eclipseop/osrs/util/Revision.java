@@ -1,12 +1,12 @@
 package com.eclipseop.osrs.util;
 
-import java.util.Arrays;
-import java.util.function.Function;
-import java.util.stream.Stream;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class Revision {
 
@@ -14,9 +14,9 @@ public class Revision {
     AbstractInsnNode abstractInsnNode =
         classNode.methods.stream()
             .filter(mn -> mn.name.equals("init"))
-            .flatMap(
-                (Function<MethodNode, Stream<AbstractInsnNode>>)
-                    methodNode -> Arrays.stream(methodNode.instructions.toArray()))
+            .mapMulti(
+                (BiConsumer<MethodNode, Consumer<AbstractInsnNode>>)
+                    (mn, c) -> mn.instructions.forEach(c))
             .filter(ain -> ain instanceof IntInsnNode && ((IntInsnNode) ain).operand == 503)
             .findFirst()
             .orElseThrow();
