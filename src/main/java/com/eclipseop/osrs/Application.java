@@ -7,10 +7,11 @@ import com.google.cloud.functions.BackgroundFunction;
 import com.google.cloud.functions.Context;
 import com.google.cloud.storage.*;
 import com.google.events.cloud.pubsub.v1.Message;
+import org.objectweb.asm.tree.ClassNode;
+
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.StreamSupport;
-import org.objectweb.asm.tree.ClassNode;
 
 public class Application implements BackgroundFunction<Message> {
 

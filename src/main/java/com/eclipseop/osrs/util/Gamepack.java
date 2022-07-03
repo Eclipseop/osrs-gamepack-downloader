@@ -1,5 +1,8 @@
 package com.eclipseop.osrs.util;
 
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.tree.ClassNode;
+
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
@@ -10,27 +13,26 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.tree.ClassNode;
 
 public class Gamepack {
 
   private static final Logger LOGGER = Logger.getLogger(Gamepack.class.getName());
-  private static final Function<JarInputStream, byte[]> jisToByteArrayFunction =
-      jis -> {
+
+  private static final Function<InputStream, byte[]> readInputStream =
+      inputStream -> {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
           byte[] buffer = new byte[4096];
           int caret;
 
-          while ((caret = jis.read(buffer, 0, buffer.length)) != -1) {
+          while ((caret = inputStream.read(buffer, 0, buffer.length)) != -1) {
             out.write(buffer, 0, caret);
           }
           out.flush();
           return out.toByteArray();
         } catch (IOException e) {
           e.printStackTrace();
+          return null;
         }
-        return null;
       };
 
   private static List<String> getConfig() {
@@ -70,7 +72,7 @@ public class Gamepack {
       while ((entry = jis.getNextJarEntry()) != null) {
         if (!entry.getName().endsWith(".class")) continue;
 
-        ClassReader cr = new ClassReader(jisToByteArrayFunction.apply(jis));
+        ClassReader cr = new ClassReader(readInputStream.apply(jis));
         ClassNode classNode = new ClassNode();
 
         cr.accept(classNode, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
@@ -84,24 +86,12 @@ public class Gamepack {
   }
 
   public static byte[] getJarBytes() {
-    try {
-      InputStream inputStream =
-          new BufferedInputStream(new URL(getGamepackDownloadUrl()).openStream());
-      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-      byte[] buffer = new byte[4096];
-      int caret;
-
-      while ((caret = inputStream.read(buffer)) != -1) {
-        outputStream.write(buffer, 0, caret);
-      }
-
-      inputStream.close();
-      outputStream.close();
-      return outputStream.toByteArray();
+    try (InputStream inputStream =
+        new BufferedInputStream(new URL(getGamepackDownloadUrl()).openStream())) {
+      return readInputStream.apply(inputStream);
     } catch (IOException e) {
       e.printStackTrace();
+      return null;
     }
-    return null;
   }
 }
