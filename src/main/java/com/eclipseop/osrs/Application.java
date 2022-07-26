@@ -15,7 +15,6 @@ import java.util.stream.StreamSupport;
 
 public class Application implements BackgroundFunction<Message> {
 
-  public static final String PROJECT_ID = "osrs-gamepack-archive";
   public static final String GCS_BUCKET = "gamepacks";
 
   private static final Logger LOGGER = Logger.getLogger(Application.class.getName());
@@ -31,7 +30,7 @@ public class Application implements BackgroundFunction<Message> {
                 .orElseThrow());
     LOGGER.info("Detected Revision: " + revision);
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(PROJECT_ID).build().getService();
+    Storage storage = StorageOptions.getDefaultInstance().getService();
     Page<Blob> blobs = storage.list(GCS_BUCKET);
 
     String objectName = "osrs-" + revision + ".jar";
