@@ -38,7 +38,8 @@ public class Application implements BackgroundFunction<Message> {
     Page<Blob> blobPages = storage.list(GCS_BUCKET);
 
     List<Blob> blobs =
-        StreamSupport.stream(blobPages.iterateAll().spliterator(), false).collect(Collectors.toList());
+        StreamSupport.stream(blobPages.iterateAll().spliterator(), false)
+            .collect(Collectors.toList());
 
     Optional<Blob> lastRevisionBlob =
         blobs.stream().max(Comparator.comparingLong(BlobInfo::getCreateTime));
