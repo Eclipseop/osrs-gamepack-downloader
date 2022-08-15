@@ -1,6 +1,5 @@
 package com.eclipseop.osrs;
 
-import com.eclipseop.osrs.util.Gamepack;
 import com.eclipseop.osrs.util.Revision;
 import com.google.api.gax.paging.Page;
 import com.google.cloud.functions.BackgroundFunction;
@@ -67,7 +66,7 @@ public class Application implements BackgroundFunction<Message> {
       }
 
       LOGGER.info("New revision! Downloading...");
-      //downloadAndInsert(storage, i);
+      // downloadAndInsert(storage, i);
       break;
     }
   }
@@ -75,14 +74,13 @@ public class Application implements BackgroundFunction<Message> {
   private static boolean alreadyHave(Page<Blob> blobs, int revision) {
     String objectName = "osrs-" + revision + ".jar";
 
-    return
-        StreamSupport.stream(blobs.iterateAll().spliterator(), false)
-            .anyMatch(blob -> blob.getName().equals(objectName));
+    return StreamSupport.stream(blobs.iterateAll().spliterator(), false)
+        .anyMatch(blob -> blob.getName().equals(objectName));
   }
 
   private static void downloadAndInsert(Storage storage, int revision) {
     BlobId blobId = BlobId.of(GCS_BUCKET, String.format("osrs-%d.jar", revision));
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-    //storage.create(blobInfo, Gamepack.getJarBytes());
+    // storage.create(blobInfo, Gamepack.getJarBytes());
   }
 }
