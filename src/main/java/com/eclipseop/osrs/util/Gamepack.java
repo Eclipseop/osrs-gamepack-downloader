@@ -31,9 +31,9 @@ public class Gamepack {
 
   private static List<String> getConfig() {
     try (BufferedReader br =
-             new BufferedReader(
-                 new InputStreamReader(
-                     new URL("http://oldschool.runescape.com/jav_config.ws").openStream()))) {
+        new BufferedReader(
+            new InputStreamReader(
+                new URL("http://oldschool.runescape.com/jav_config.ws").openStream()))) {
       return br.lines().collect(Collectors.toList());
     } catch (IOException e) {
       LOGGER.warning("Exception occurred while parsing jav_config.ws");
@@ -53,7 +53,7 @@ public class Gamepack {
 
   public static byte[] getJarBytes() {
     try (InputStream inputStream =
-             new BufferedInputStream(new URL(getGamepackDownloadUrl()).openStream())) {
+        new BufferedInputStream(new URL(getGamepackDownloadUrl()).openStream())) {
       return readInputStream.apply(inputStream);
     } catch (IOException e) {
       e.printStackTrace();
