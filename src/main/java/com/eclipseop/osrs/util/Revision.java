@@ -13,7 +13,6 @@ import java.net.Socket;
 import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Logger;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Revision {
@@ -21,7 +20,15 @@ public class Revision {
   private static final Logger LOGGER = Logger.getLogger(Revision.class.getName());
 
   public static int getRevision(ClassNode classNode) {
-    AbstractInsnNode abstractInsnNode = classNode.methods.stream().filter(mn -> mn.name.equals("init")).flatMap((Function<MethodNode, Stream<AbstractInsnNode>>) mn -> Arrays.stream(mn.instructions.toArray())).filter(ain -> ain instanceof IntInsnNode && ((IntInsnNode) ain).operand == 503).findFirst().orElseThrow();
+    AbstractInsnNode abstractInsnNode =
+        classNode.methods.stream()
+            .filter(mn -> mn.name.equals("init"))
+            .flatMap(
+                (Function<MethodNode, Stream<AbstractInsnNode>>)
+                    mn -> Arrays.stream(mn.instructions.toArray()))
+            .filter(ain -> ain instanceof IntInsnNode && ((IntInsnNode) ain).operand == 503)
+            .findFirst()
+            .orElseThrow();
 
     return ((IntInsnNode) abstractInsnNode.getNext()).operand;
   }

@@ -20,35 +20,36 @@ public class Application implements BackgroundFunction<Message> {
 
   @Override
   public void accept(Message message, Context context) throws Exception {
-//    List<ClassNode> gamepackClassNodes = Gamepack.parse();
-//    int revision =
-//        Revision.getRevision(
-//            gamepackClassNodes.stream()
-//                .filter(cn -> cn.name.equals("client"))
-//                .findFirst()
-//                .orElseThrow());
-//    LOGGER.info("Detected Revision: " + revision);
-//
-//    Storage storage = StorageOptions.getDefaultInstance().getService();
-//    Page<Blob> blobs = storage.list(GCS_BUCKET);
-//
-//    String objectName = "osrs-" + revision + ".jar";
-//
-//    boolean alreadyHaveGamepack =
-//        StreamSupport.stream(blobs.iterateAll().spliterator(), false)
-//            .anyMatch(blob -> blob.getName().equals(objectName));
-//    if (alreadyHaveGamepack) {
-//      LOGGER.info("Already have " + objectName);
-//      return;
-//    }
+    //    List<ClassNode> gamepackClassNodes = Gamepack.parse();
+    //    int revision =
+    //        Revision.getRevision(
+    //            gamepackClassNodes.stream()
+    //                .filter(cn -> cn.name.equals("client"))
+    //                .findFirst()
+    //                .orElseThrow());
+    //    LOGGER.info("Detected Revision: " + revision);
+    //
+    //    Storage storage = StorageOptions.getDefaultInstance().getService();
+    //    Page<Blob> blobs = storage.list(GCS_BUCKET);
+    //
+    //    String objectName = "osrs-" + revision + ".jar";
+    //
+    //    boolean alreadyHaveGamepack =
+    //        StreamSupport.stream(blobs.iterateAll().spliterator(), false)
+    //            .anyMatch(blob -> blob.getName().equals(objectName));
+    //    if (alreadyHaveGamepack) {
+    //      LOGGER.info("Already have " + objectName);
+    //      return;
+    //    }
 
     Storage storage = StorageOptions.getDefaultInstance().getService();
     Page<Blob> blobs = storage.list(GCS_BUCKET);
-    Optional<Integer> lastRevision = StreamSupport.stream(blobs.iterateAll().spliterator(), false)
-        .map(Blob::getName)
-        .map(str -> str.replaceAll("\\D", ""))
-        .map(Integer::valueOf)
-        .max(Integer::compare);
+    Optional<Integer> lastRevision =
+        StreamSupport.stream(blobs.iterateAll().spliterator(), false)
+            .map(Blob::getName)
+            .map(str -> str.replaceAll("\\D", ""))
+            .map(Integer::valueOf)
+            .max(Integer::compare);
 
     if (lastRevision.isEmpty()) {
       LOGGER.warning("Unable to detect last revision!");
@@ -63,11 +64,11 @@ public class Application implements BackgroundFunction<Message> {
       downloadAndInsert(storage, i);
       break;
     }
-//
-//    LOGGER.info("Attempting to insert " + objectName);
-//    BlobId blobId = BlobId.of(GCS_BUCKET, objectName);
-//    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-//    storage.create(blobInfo, Gamepack.getJarBytes());
+    //
+    //    LOGGER.info("Attempting to insert " + objectName);
+    //    BlobId blobId = BlobId.of(GCS_BUCKET, objectName);
+    //    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+    //    storage.create(blobInfo, Gamepack.getJarBytes());
   }
 
   private static void downloadAndInsert(Storage storage, int revision) {
