@@ -49,7 +49,7 @@ public class Application implements BackgroundFunction<Message> {
       return;
     }
 
-    int lastRevision = Integer.parseInt(lastRevisionBlob.get().getName().replace("\\D", ""));
+    int lastRevision = Integer.parseInt(lastRevisionBlob.get().getName().replaceAll("\\D", ""));
     LOGGER.info("Last revision: " + lastRevision);
 
     List<String> blobNames = blobs.stream().map(Blob::getName).collect(Collectors.toList());
