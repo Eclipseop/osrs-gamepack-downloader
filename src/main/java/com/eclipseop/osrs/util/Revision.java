@@ -1,37 +1,15 @@
 package com.eclipseop.osrs.util;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.*;
-import java.util.function.Function;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 public class Revision {
 
   private static final Logger LOGGER = Logger.getLogger(Revision.class.getName());
-
-  public static int getRevision(ClassNode classNode) {
-    AbstractInsnNode abstractInsnNode =
-        classNode.methods.stream()
-            .filter(mn -> mn.name.equals("init"))
-            .flatMap(
-                (Function<MethodNode, Stream<AbstractInsnNode>>)
-                    mn -> Arrays.stream(mn.instructions.toArray()))
-            .filter(ain -> ain instanceof IntInsnNode && ((IntInsnNode) ain).operand == 503)
-            .findFirst()
-            .orElseThrow();
-
-    return ((IntInsnNode) abstractInsnNode.getNext()).operand;
-  }
 
   private static final byte REV_OPERAND = 15;
   private static final String HOST = "oldschool78.runescape.com";

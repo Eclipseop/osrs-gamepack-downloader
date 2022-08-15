@@ -1,5 +1,6 @@
 package com.eclipseop.osrs;
 
+import com.eclipseop.osrs.util.Gamepack;
 import com.eclipseop.osrs.util.Revision;
 import com.google.api.gax.paging.Page;
 import com.google.cloud.functions.BackgroundFunction;
@@ -19,28 +20,6 @@ public class Application implements BackgroundFunction<Message> {
 
   @Override
   public void accept(Message message, Context context) throws Exception {
-    //    List<ClassNode> gamepackClassNodes = Gamepack.parse();
-    //    int revision =
-    //        Revision.getRevision(
-    //            gamepackClassNodes.stream()
-    //                .filter(cn -> cn.name.equals("client"))
-    //                .findFirst()
-    //                .orElseThrow());
-    //    LOGGER.info("Detected Revision: " + revision);
-    //
-    //    Storage storage = StorageOptions.getDefaultInstance().getService();
-    //    Page<Blob> blobs = storage.list(GCS_BUCKET);
-    //
-    //    String objectName = "osrs-" + revision + ".jar";
-    //
-    //    boolean alreadyHaveGamepack =
-    //        StreamSupport.stream(blobs.iterateAll().spliterator(), false)
-    //            .anyMatch(blob -> blob.getName().equals(objectName));
-    //    if (alreadyHaveGamepack) {
-    //      LOGGER.info("Already have " + objectName);
-    //      return;
-    //    }
-
     Storage storage = StorageOptions.getDefaultInstance().getService();
     Page<Blob> blobs = storage.list(GCS_BUCKET);
     Optional<Integer> lastRevision =
@@ -66,7 +45,7 @@ public class Application implements BackgroundFunction<Message> {
       }
 
       LOGGER.info("New revision! Downloading...");
-      // downloadAndInsert(storage, i);
+      downloadAndInsert(storage, i);
       break;
     }
   }
@@ -81,6 +60,6 @@ public class Application implements BackgroundFunction<Message> {
   private static void downloadAndInsert(Storage storage, int revision) {
     BlobId blobId = BlobId.of(GCS_BUCKET, String.format("osrs-%d.jar", revision));
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-    // storage.create(blobInfo, Gamepack.getJarBytes());
+    storage.create(blobInfo, Gamepack.getJarBytes());
   }
 }
