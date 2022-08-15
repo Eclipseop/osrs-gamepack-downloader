@@ -25,8 +25,10 @@ public class Application implements BackgroundFunction<Message> {
     Storage storage = StorageOptions.getDefaultInstance().getService();
     Page<Blob> blobs = storage.list(GCS_BUCKET);
 
-    List<String> blobNames = StreamSupport.stream(blobs.iterateAll().spliterator(), false)
-        .map(Blob::getName).collect(Collectors.toList());
+    List<String> blobNames =
+        StreamSupport.stream(blobs.iterateAll().spliterator(), false)
+            .map(Blob::getName)
+            .collect(Collectors.toList());
 
     Optional<Integer> lastRevision =
         blobNames.stream()
