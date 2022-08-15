@@ -1,16 +1,10 @@
 package com.eclipseop.osrs.util;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.tree.ClassNode;
-
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -55,34 +49,6 @@ public class Gamepack {
 
   private static String getGamepackDownloadUrl() {
     return "http://oldschool1.runescape.com/" + getGamepackName();
-  }
-
-  private static JarInputStream getJarInputStream() throws IOException {
-    String gamepackDownloadUrl = getGamepackDownloadUrl();
-    return new JarInputStream(new URL(gamepackDownloadUrl).openStream());
-  }
-
-  public static List<ClassNode> parse() {
-    List<ClassNode> classNodes = new ArrayList<>();
-
-    try {
-      JarInputStream jis = getJarInputStream();
-
-      JarEntry entry;
-      while ((entry = jis.getNextJarEntry()) != null) {
-        if (!entry.getName().endsWith(".class")) continue;
-
-        ClassReader cr = new ClassReader(readInputStream.apply(jis));
-        ClassNode classNode = new ClassNode();
-
-        cr.accept(classNode, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
-
-        classNodes.add(classNode);
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return classNodes;
   }
 
   public static byte[] getJarBytes() {
