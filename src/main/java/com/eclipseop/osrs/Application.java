@@ -8,8 +8,10 @@ import com.google.cloud.functions.Context;
 import com.google.cloud.storage.*;
 import com.google.events.cloud.pubsub.v1.Message;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class Application implements BackgroundFunction<Message> {
@@ -22,9 +24,12 @@ public class Application implements BackgroundFunction<Message> {
   public void accept(Message message, Context context) throws Exception {
     Storage storage = StorageOptions.getDefaultInstance().getService();
     Page<Blob> blobs = storage.list(GCS_BUCKET);
+
+    List<String> blobNames = StreamSupport.stream(blobs.iterateAll().spliterator(), false)
+        .map(Blob::getName).collect(Collectors.toList());
+
     Optional<Integer> lastRevision =
-        StreamSupport.stream(blobs.iterateAll().spliterator(), false)
-            .map(Blob::getName)
+        blobNames.stream()
             .map(str -> str.replaceAll("\\D", ""))
             .map(Integer::valueOf)
             .max(Integer::compare);
@@ -39,7 +44,7 @@ public class Application implements BackgroundFunction<Message> {
       if (!Revision.isCurrentRevision(i)) continue;
 
       LOGGER.info("Detected current revision as: " + i);
-      if (alreadyHave(blobs, i)) {
+      if (alreadyHave(blobNames, i)) {
         LOGGER.info("We already have! Skipping download");
         return;
       }
@@ -50,11 +55,9 @@ public class Application implements BackgroundFunction<Message> {
     }
   }
 
-  private static boolean alreadyHave(Page<Blob> blobs, int revision) {
+  private static boolean alreadyHave(List<String> blobs, int revision) {
     String objectName = "osrs-" + revision + ".jar";
-
-    return StreamSupport.stream(blobs.iterateAll().spliterator(), false)
-        .anyMatch(blob -> blob.getName().equals(objectName));
+    return blobs.contains(objectName);
   }
 
   private static void downloadAndInsert(Storage storage, int revision) {
