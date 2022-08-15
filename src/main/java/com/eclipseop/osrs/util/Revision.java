@@ -71,13 +71,4 @@ public class Revision {
 
     return false;
   }
-
-  public static void main(String[] args) {
-    Optional<Integer> max = Stream.of("15", "54", "13").map(Integer::valueOf).max(Integer::compare);
-    System.out.println(max);
-
-    for (int i = 207; i < 207 + 3; i++) {
-      System.out.println(i);
-    }
-  }
 }

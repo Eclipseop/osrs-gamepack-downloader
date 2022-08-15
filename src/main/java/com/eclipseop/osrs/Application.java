@@ -57,23 +57,32 @@ public class Application implements BackgroundFunction<Message> {
     }
     LOGGER.info("Last revision: " + lastRevision);
 
-    for (int i = lastRevision.get() + 1; i < lastRevision.get() + 3; i++) {
+    for (int i = lastRevision.get() - 1; i < lastRevision.get() + 3; i++) {
       if (!Revision.isCurrentRevision(i)) continue;
 
-      LOGGER.info("Detected new revision: " + i);
-      downloadAndInsert(storage, i);
+      LOGGER.info("Detected current revision as: " + i);
+      if (alreadyHave(blobs, i)) {
+        LOGGER.info("We already have! Skipping download");
+        return;
+      }
+
+      LOGGER.info("New revision! Downloading...");
+      //downloadAndInsert(storage, i);
       break;
     }
-    //
-    //    LOGGER.info("Attempting to insert " + objectName);
-    //    BlobId blobId = BlobId.of(GCS_BUCKET, objectName);
-    //    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-    //    storage.create(blobInfo, Gamepack.getJarBytes());
+  }
+
+  private static boolean alreadyHave(Page<Blob> blobs, int revision) {
+    String objectName = "osrs-" + revision + ".jar";
+
+    return
+        StreamSupport.stream(blobs.iterateAll().spliterator(), false)
+            .anyMatch(blob -> blob.getName().equals(objectName));
   }
 
   private static void downloadAndInsert(Storage storage, int revision) {
     BlobId blobId = BlobId.of(GCS_BUCKET, String.format("osrs-%d.jar", revision));
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-    storage.create(blobInfo, Gamepack.getJarBytes());
+    //storage.create(blobInfo, Gamepack.getJarBytes());
   }
 }
